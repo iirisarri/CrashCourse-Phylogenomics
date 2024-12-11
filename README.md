@@ -163,12 +163,12 @@ iqtree -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuc
 Congratulations!! If everything went well, you should get your maximum likelihood estimation of the vertebrate phylogeny (`.treefile`)! Looking into the file you will see a tree in parenthetical (newick) format. See below how to create a graphical representation of your tree.
 
 
-## EXTRA: Bayesian Inference 
-The next step would be to run a Bayesian analysis using Phylobayes, however, due to time constraints, we will provide you with the Bayesian topology. Compare it with the maximum likelihood one and check if you find any difference. 
+## EXTRA: Bayesian Inference
+The next step would be to run a Bayesian analysis using [Phylobayes](https://github.com/bayesiancook/phylobayes), however due to time constraints, we will provide you with the bayesian topology. Compare it with the ML one and check if you find any difference.
 
 This is the command we used for phylobayes
 
-```sh
+```
 #Chain 1
 pb_mpi  -d FcC_supermatrix.fas  -cat  -gtr  chain1
 
@@ -181,7 +181,6 @@ bpcomp -x burnin chain1  chain2
 #To get the parameters
 tracecomp -x burnin chain1  chain2
 ```
-
 
 ## Coalescence analysis
 
@@ -215,14 +214,14 @@ Congratulations!! You just got your coalescent species tree!! Is it different fr
 ## Tree visualization
 
 
-Trees are just text files representing relationships with parentheses; did you see that already? But it is more practical to plot them as a graph, for which we can use tools such as [iTOL](https://itol.embl.de), [FigTree](https://github.com/rambaut/figtree/releases), [iroki](https://www.iroki.net/), or R (e.g. [ggtree](https://bioconductor.org/packages/release/bioc/html/ggtree.html), [phytools](http://www.phytools.org/); see provided R code).
+Trees are just text files representing relationships with parentheses; did you see that already? But it is more practical to plot them as a graph, for which we can use tools such as [iTOL](https://itol.embl.de), [FigTree](https://github.com/rambaut/figtree/releases), [TreeViewer] (https://treeviewer.org/), [iroki](https://www.iroki.net/), or R (e.g. [ggtree](https://bioconductor.org/packages/release/bioc/html/ggtree.html), [phytools](http://www.phytools.org/); see provided R code).
 
 Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in the branch of *Callorhinchus milii* and the select "Tree Structure/Reroot the tree here". Branch support values can be shown under the "Advanced" menu. The tree can be modified in many other ways, and finally, a graphical tree can be exported. Similar options are available in FigTree.
 
 [Well done!](https://media.giphy.com/media/wux5AMYo8zHgc/giphy.gif)
 
 
-## Software links
+##Useful link
 
 * Orthofinder (https://github.com/davidemms/OrthoFinder)
 * PREQUAL (https://github.com/simonwhelan/prequal)
@@ -236,4 +235,3 @@ Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in th
 * FIGTree V1.4.4 (https://github.com/rambaut/figtree/releases) 
 * TreeViewer (https://treeviewer.org/)
 * iTOL (https://itol.embl.de/)
-  
