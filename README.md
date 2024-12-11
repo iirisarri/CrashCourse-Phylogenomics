@@ -77,6 +77,25 @@ Don't forget to check the output: is your command doing what you want?
 **NOTE ABOUT ORTHOLOGY**: Ensuring orthology is a difficult issue and often using a tool like Orthofinder might not be enough. Paralogy is a tricky business! Research has shown (e.g. [here](https://www.nature.com/articles/s41559-017-0126) [here](https://academic.oup.com/sysbio/article/71/1/105/6275704?login=false) or [here](https://academic.oup.com/mbe/article/36/6/1344/5418531)) that including paralogs can bias the phylogenetic relationship and molecular clock estimates, particularly when the phylogenetic signal is weak. Paralogs should always be removed before phylogenetic inference. But identifying them can be difficult and time-consuming. One could build single-gene trees and look for sequences producing extremely long branches or clustering outside of the remaining sequences. [Automatic pipelines](https://github.com/fethalen/phylopypruner) also exist.
 
 
+## EXTRA: Pre-alignment and quality filtering
+
+Often, transcriptomes and genomes have stretches of erroneous, non-homologous amino acids or nucleotides, produced by sequencing errors, assembly errors, or errors in genome annotation. But until recently, these type of errors had been mostly ignored because no automatic tool could deal with them.
+
+We will use [PREQUAL](https://academic.oup.com/bioinformatics/article/34/22/3929/5026659?login=true), a software that takes sets of (homologous) unaligned sequences and identifies sequence stretches (amino acids or codons) sharing no evidence of (residue) homology, which are then masked in the output. Note that homology can be invoked at the level of sequences as well as of residues (amino acids or nucleotides). 
+
+Download and Iinstall PREQUAL:
+```
+git clone https://github.com/simonwhelan/prequal
+cd prequal
+make
+```
+
+Running PREQUAL for each set orthogroup is easy:
+```sh
+for f in *fa; do prequal $f ; done
+```
+The filtered (masked) alignments are in .filtered whereas .prequal contains relevant information such as the number of residues filtered.
+
 
 ## Multiple sequence alignment
 
@@ -109,10 +128,10 @@ While diving into phylogenomic pipelines, it is always advisable to check a few 
 ## Concatenate alignment
 
 
-To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. This can be done with tools such as [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
+To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. There are many tools that you can use for this step (e.g [concat_fasta.pl](https://github.com/santiagosnchez/concat_fasta) or [catsequences](https://github.com/ChrisCreevey/catsequences)). Here, we will use [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
 
 ```
-for f in ../*clipkit; mv $f $f.fas; done
+for f in ../*clipkit; do mv $f $f.fas; done
 mkdir concatenation/
 mv *clipkit.fas concatenation/
 
