@@ -163,6 +163,25 @@ iqtree -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuc
 Congratulations!! If everything went well, you should get your maximum likelihood estimation of the vertebrate phylogeny (`.treefile`)! Looking into the file you will see a tree in parenthetical (newick) format. See below how to create a graphical representation of your tree.
 
 
+## EXTRA: Bayesian Inference 
+The next step would be to run a Bayesian analysis using Phylobayes, however, due to time constraints, we will provide you with the Bayesian topology. Compare it with the maximum likelihood one and check if you find any difference. 
+
+This is the command we used for phylobayes
+
+```sh
+#Chain 1
+pb_mpi  -d FcC_supermatrix.fas  -cat  -gtr  chain1
+
+#Chain2
+pb_mpi  -d  FcC_supermatrix.fas  -cat  -gtr  chain2
+
+#To check for convergence
+bpcomp -x burnin chain1  chain2
+
+#To get the parameters
+tracecomp -x burnin chain1  chain2
+```
+
 
 ## Coalescence analysis
 
@@ -201,3 +220,20 @@ Trees are just text files representing relationships with parentheses; did you s
 Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in the branch of *Callorhinchus milii* and the select "Tree Structure/Reroot the tree here". Branch support values can be shown under the "Advanced" menu. The tree can be modified in many other ways, and finally, a graphical tree can be exported. Similar options are available in FigTree.
 
 [Well done!](https://media.giphy.com/media/wux5AMYo8zHgc/giphy.gif)
+
+
+## Software links
+
+* Orthofinder (https://github.com/davidemms/OrthoFinder)
+* PREQUAL (https://github.com/simonwhelan/prequal)
+* MAFFT (https://mafft.cbrc.jp/alignment/software/source.html)
+* MUSCLE v5 (https://github.com/rcedgar/muscle)
+* TrimAL (https://vicfero.github.io/trimal/)
+* FASTCONCAT (https://github.com/PatrickKueck/FASconCAT-G)
+* IQTREE2 (http://www.iqtree.org/)
+* Phylobayes (https://github.com/bayesiancook/phylobayes/tree/master)
+* ASTRAL (https://github.com/smirarab/ASTRAL)
+* FIGTree V1.4.4 (https://github.com/rambaut/figtree/releases) 
+* TreeViewer (https://treeviewer.org/)
+* iTOL (https://itol.embl.de/)
+  
