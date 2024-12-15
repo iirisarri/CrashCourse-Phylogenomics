@@ -131,7 +131,7 @@ While diving into phylogenomic pipelines, it is always advisable to check a few 
 To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. There are many tools that you can use for this step (e.g [concat_fasta.pl](https://github.com/santiagosnchez/concat_fasta) or [catsequences](https://github.com/ChrisCreevey/catsequences)). Here, we will use [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
 
 ```
-for f in *clipkit; do mv $f $f.fas; done
+for f in ../*clipkit; do mv $f $f.fas; done
 mkdir concatenation/
 mv *clipkit.fas concatenation/
 
@@ -148,23 +148,23 @@ Is your concatenated file what you expected? It should contain 23 taxa and 21 ge
 
 One of the most common approaches in phylogenomics is gene concatenation: the signal from multiple genes is "pooled" together with the aim of increasing resolution power. This method is best when among-gene discordance is low.
 
-We will use [IQTREE](http://www.iqtree.org/), an efficient and accurate software for maximum likelihood analysis. Another great alternative is [RAxML](https://github.com/stamatak/standard-RAxML). The most simple analysis is to treat the concatenated dataset as a single homogeneous entity. We need to provide the number of threads to use (`-nt AUTO` will use the optimal number of threads), the input alignment (`-s`), tell IQTREE to select the best-fit evolutionary model with BIC (`-m TEST -merit BIC -msub nuclear`) and ask for branch support measures such as non-parametric bootstrapping and approximate likelihood ratio test (`-bb 1000 -alrt 1000 -bnni`):
+We will use [IQTREE](http://www.iqtree.org/), an efficient and accurate software for maximum likelihood analysis. Another great alternative is [RAxML](https://github.com/stamatak/standard-RAxML). The most simple analysis is to treat the concatenated dataset as a single homogeneous entity. We need to provide the number of threads to use (`-nt 1`) input alignment (`-s`), tell IQTREE to select the best-fit evolutionary model with BIC (`-m TEST -merit BIC -msub nuclear`) and ask for branch support measures such as non-parametric bootstrapping and approximate likelihood ratio test (`-bb 1000 -alrt 1000 -bnni`):
 
 ```
-iqtree -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt AUTO -bnni -pre unpartitioned
+iqtree -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt 1 -bnni -pre unpartitioned
 ```
 
 A more sophisticated approach would be to perform a partitioned maximum likelihood analysis, where different genes (or other data partitions) are allowed to have different evolutionary models. This should provide a better fit to the data but will increase the number of parameters too. To launch this analysis we need to provide a file containing the coordinates of the partitions (`-p`) and we can ask IQTREE to select the best-fit models for each partition, in this case, according to AICc (more suitable for shorter alignments).
 
 ```
-iqtree -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt AUTO -bnni -pre partitioned
+iqtree -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt 1 -bnni -pre partitioned
 ```
 
 Congratulations!! If everything went well, you should get your maximum likelihood estimation of the vertebrate phylogeny (`.treefile`)! Looking into the file you will see a tree in parenthetical (newick) format. See below how to create a graphical representation of your tree.
 
 
 ## EXTRA: Bayesian Inference 
-The next step would be to run a Bayesian analysis using Phylobayes, however, due to time constraints, we will provide you with the Bayesian topology. Compare it with the maximum likelihood one and check if you find any difference. 
+The next step would be to run a Bayesian analysis using [Phylobayes](https://github.com/bayesiancook/phylobayes/tree/master), however, due to time constraints, we will provide you with the Bayesian topology. Compare it with the maximum likelihood one and check if you find any difference. 
 
 This is the command we used for phylobayes
 
@@ -174,14 +174,37 @@ pb_mpi  -d FcC_supermatrix.fas  -cat  -gtr  chain1
 
 #Chain2
 pb_mpi  -d  FcC_supermatrix.fas  -cat  -gtr  chain2
-
-#To check for convergence
-bpcomp -x burnin chain1  chain2
-
-#To get the parameters
-tracecomp -x burnin chain1  chain2
 ```
+Phylobayes will run for ever, for this practical I let it run for 3 days.
+Once the analysis is stopped we need to check for the convergence and generate the consensus tree. 
 
+```sh
+#check how many trees you have generated in the two chains 
+grep -c ";" *treelist
+#Supermatrix.chain1.treelist:69861
+#Supermatrix.chain2.treelist:57407
+```
+In the bpcomp function you have to provide the burnin (e.g. the % tree generated in the very first part of the run which will be removed), the sampling frequency, the number of trees you have generated in the smallest chain (e.g. in our case chain 2) and the name of the chains
+
+```sh
+bpcomp -x 12000 10 57407 Supermatrix.chain1 Supermatrix.chain2
+
+#initialising random
+#seed was : 326052
+
+
+#Supermatrix.chain1.treelist : 4540 trees
+#Supermatrix.chain2.treelist : 4540 trees
+
+#maxdiff     : 0.00462555
+#meandiff    : 0.000228671
+
+#bipartition list in : bpcomp.bplist
+#consensus in        : bpcomp.con.tre
+
+
+```
+You can check the bayesian run in the folder 
 
 ## Coalescence analysis
 
@@ -237,3 +260,4 @@ Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in th
 * TreeViewer (https://treeviewer.org/)
 * iTOL (https://itol.embl.de/)
   
+ 
