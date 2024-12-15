@@ -202,7 +202,6 @@ bpcomp -x 12000 10 57407 Supermatrix.chain1 Supermatrix.chain2
 #bipartition list in : bpcomp.bplist
 #consensus in        : bpcomp.con.tre
 
-
 ```
 You can check the bayesian run in the folder 
 
