@@ -170,10 +170,10 @@ Here are the commands we used for phylobayes.
 
 ```sh
 #Chain 1
-pb_mpi  -d FcC_supermatrix.fas  -cat  -gtr  chain1
+pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain1
 
 #Chain2
-pb_mpi  -d  FcC_supermatrix.fas  -cat  -gtr  chain2
+pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain2
 ```
 Unless you have a walltime limit on your server Phylobayes will run forever, for this practical I let it run for 3 days. You can stop the run and let it start again. 
 Once the analysis is stopped we need to check for the convergence and generate the consensus tree. 
