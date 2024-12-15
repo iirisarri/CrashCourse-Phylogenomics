@@ -186,7 +186,7 @@ grep -c ";" *treelist
 ```
 In Phylobayes there are two functions to check convergence: `bpcomp` will check convergence for the tree space, while `tracecomp` will check convergence of the continuous parameters of the model. They have a similar syntax and for today we will see only `bpcomp`. In this function you have to provide the burnin (e.g. the % tree generated in the very first part of the run which will be removed), the sampling frequency, the number of trees you have generated in the smallest chain (e.g. in our case chain 2) and the name of the chains.
 
-As stated in the Phylobayes  "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments."
+As stated in the Phylobayes manual "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments."
 
 Some guidelines:
 • maxdiff < 0.1: good run.
@@ -245,11 +245,10 @@ java -jar /srv/evop/resources/astral/ASTRAL/Astral/Astral.5.7.8.jar -i my_gene_t
 Congratulations!! You just got your coalescent species tree!! Is it different from the concatenated maximum likelihood trees? 
 
 
-
 ## Tree visualization
 
 
-Trees are just text files representing relationships with parentheses; did you see that already? But it is more practical to plot them as a graph, for which we can use tools such as [iTOL](https://itol.embl.de), [FigTree](https://github.com/rambaut/figtree/releases), [iroki](https://www.iroki.net/), or R (e.g. [ggtree](https://bioconductor.org/packages/release/bioc/html/ggtree.html), [phytools](http://www.phytools.org/); see provided R code).
+Trees are just text files representing relationships with parentheses; did you see that already? But it is more practical to plot them as a graph, for which we can use tools such as [iTOL](https://itol.embl.de), [FigTree](https://github.com/rambaut/figtree/releases), [TreeViewer] (https://treeviewer.org/) [iroki](https://www.iroki.net/), or R (e.g. [ggtree](https://bioconductor.org/packages/release/bioc/html/ggtree.html), [phytools](http://www.phytools.org/); see provided R code).
 
 Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in the branch of *Callorhinchus milii* and the select "Tree Structure/Reroot the tree here". Branch support values can be shown under the "Advanced" menu. The tree can be modified in many other ways, and finally, a graphical tree can be exported. Similar options are available in FigTree.
 
@@ -271,6 +270,3 @@ Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in th
 * TreeViewer (https://treeviewer.org/)
 * iTOL (https://itol.embl.de/)
   
- 
-
-[def]: https://gensoft.pasteur.fr/docs/phylobayes/4.1c/phylobayes4.1.pdf
