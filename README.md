@@ -186,7 +186,7 @@ grep -c ";" *treelist
 ```
 In Phylobayes there are two functions to check convergence: `bpcomp` will check convergence for the tree space, while `tracecomp` will check convergence of the continuous parameters of the model. They have a similar syntax and for today we will see only `bpcomp`. In this function you have to provide the burnin (e.g. the % tree generated in the very first part of the run which will be removed), the sampling frequency, the number of trees you have generated in the smallest chain (e.g. in our case chain 2) and the name of the chains.
 
-As stated in the Phylobayes [manual] (https://gensoft.pasteur.fr/docs/phylobayes/4.1c/phylobayes4.1.pdf) "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments."
+As stated in the Phylobayes [manual] (https://gensoft.pasteur.fr/docs/phylobayes/4.1c/) "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments."
 
 Some guidelines:
 • maxdiff < 0.1: good run.
