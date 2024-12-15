@@ -131,7 +131,7 @@ While diving into phylogenomic pipelines, it is always advisable to check a few 
 To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. There are many tools that you can use for this step (e.g [concat_fasta.pl](https://github.com/santiagosnchez/concat_fasta) or [catsequences](https://github.com/ChrisCreevey/catsequences)). Here, we will use [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
 
 ```
-for f in ../*clipkit; do mv $f $f.fas; done
+for f in *clipkit; do mv $f $f.fas; done
 mkdir concatenation/
 mv *clipkit.fas concatenation/
 
