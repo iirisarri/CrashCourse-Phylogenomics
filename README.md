@@ -164,9 +164,9 @@ Congratulations!! If everything went well, you should get your maximum likelihoo
 
 
 ## EXTRA: Bayesian Inference 
-The next step would be to run a Bayesian analysis using [Phylobayes](https://github.com/bayesiancook/phylobayes/tree/master), however, due to time constraints, we will provide you with the Bayesian topology. Compare it with the maximum likelihood one and check if you find any differences. 
+The next step would be to run a Bayesian analysis using [Phylobayes](https://github.com/bayesiancook/phylobayes/tree/master), however, due to time constraints, we will provide you with the Bayesian topology. 
 
-Here are the commands we used for phylobayes.
+Here are the commands we used for Phylobayes.
 
 ```sh
 #Chain 1
@@ -175,7 +175,7 @@ pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain1
 #Chain2
 pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain2
 ```
-Unless you have a walltime limit on your server Phylobayes will run forever, for this practical I let it run for 3 days. You can stop the run and let it start again. 
+Unless you have a walltime limit on your server Phylobayes will run forever, for this practical I let it run for 3 days. 
 Once the analysis is stopped we need to check for the convergence and generate the consensus tree. 
 
 ```sh
@@ -186,7 +186,7 @@ grep -c ";" *treelist
 ```
 In Phylobayes there are two functions to check convergence: `bpcomp` will check convergence for the tree space, while `tracecomp` will check convergence of the continuous parameters of the model. They have a similar syntax and for today we will see only `bpcomp`. In this function you have to provide the burnin (e.g. the % tree generated in the very first part of the run which will be removed), the sampling frequency, the number of trees you have generated in the smallest chain (e.g. in our case chain 2) and the name of the chains.
 
-As stated in the Phylobayes manual "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments."
+As stated in the Phylobayes manual "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments (this is your tree!)."
 
 Some guidelines:
 • maxdiff < 0.1: good run.
@@ -212,7 +212,7 @@ bpcomp -x 12000 10 57407 Supermatrix.chain1 Supermatrix.chain2
 #consensus in        : bpcomp.con.tre
 
 ```
-Given the guidelines how is our run?
+Given the guidelines above, how is our run?
 
 You can check the bayesian run in the folder `intermediate_files/phylobayes`
 Open the tree in FigTree and compare it with the topology you obtained with IQTree. 
