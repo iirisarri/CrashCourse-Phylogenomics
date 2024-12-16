@@ -20,12 +20,7 @@ Let's start by cloning this repository. The starting data can be found in the `v
 git clone https://github.com/iirisarri/CrashCourse-Phylogenomics.git
 
 # Copy software in GitHub to your local software folder so everything it's in the same location
-cp CrashCours-Phylogenomics/software/* ~/Escritorio/software
-
-#Download MAFFT
-wget https://mafft.cbrc.jp/alignment/software/mafft-7.526-linux.tgz
-tar zxvf mafft-7.526-linux.tgz # the file is executable
-mv mafft-7.526-linux ~/Desktop/software
+cp CrashCourse-Phylogenomics/software/* ~/Escritorio/software
 
 # Download SeaView
 wget https://doua.prabi.fr/software/seaview_data/seaview5.tgz
