@@ -121,13 +121,15 @@ for f in *filtered; do ~/Escritorio/software/mafft $f > $f.mafft; done
 
 Some gene regions (e.g., fast-evolving) are difficult to align and thus positional homology can be uncertain. It is unclear (i.e., problem-specific) whether trimming suspicious regions [improves](https://academic.oup.com/sysbio/article/56/4/564/1682121) or [worsens](https://academic.oup.com/sysbio/article/64/5/778/1685763) tree inference. However, gently trimming very incomplete positions (e.g. with >90% gaps) will speed up computation in the next steps without significant loss of phylogenetic information .
 
-To trim alignment positions we can use [ClipKIT]([https://bmcevolbiol.biomedcentral.com/articles/10.1186/1471-2148-10-210](https://github.com/JLSteenwyk/ClipKIT)) but several other software are also available.
+To trim we are going to use BMGE.
+Here the `-g` flag allows you to remove alignment positions with > 80% gaps, you can decide which sides to exclude by changing the percentage of gaps you want to remove.
 
-To remove alignment positions with > 90% gaps:
+```sh
+for f in *mafft.fasta; 
+    do java -jar ~/Escritorio/software/BMGE.jar -i $f -t AA -g 0.8 -h 1 -w 1 -of $f.g08.fas;
+ done
+```
 
-```
-for f in *mafft; do clipkit $f -m gappy; done
-```
 
 While diving into phylogenomic pipelines, it is always advisable to check a few intermediate results to ensure we are doing what we should be doing. Multiple sequence alignments can be visualized in [SeaView](http://doua.prabi.fr/software/seaview) or [AliView](https://github.com/AliView/AliView). Also, one could have a quick look at alignments using command line tools (`less -S`).
 
