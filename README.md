@@ -15,17 +15,19 @@ We will use a dataset [from this paper](https://academic.oup.com/sysbio/article/
 
 Let's start by cloning this repository. The starting data can be found in the `vertebrate_proteomes` folder.
 
-<details>
-  <summary>Need help?</summary>
-  
 ```
-git clone https://github.com/iirisarri/PEB_Phylogenomics.git
+# clone repository, data, and software
+git clone https://github.com/iirisarri/CrashCourse-Phylogenomics.git
 
+# Copy software in GitHub to your local software folder so everything it's in the same location
+cp CrashCours-Phylogenomics/software ~/Escritorio/software
+
+# Download SeaView
+wget https://doua.prabi.fr/software/seaview_data/seaview5.tgz
+tar zxvf seaview5.tgz
 ```
-</details>
 
-
-You will see 23 fasta files, each containing a set of proteins from a different species.
+In `vertebrate_proteomes` you will see 23 fasta files, each containing a set of proteins from a different species.
 
 
 
@@ -92,7 +94,7 @@ make
 
 Running PREQUAL for each set orthogroup is easy:
 ```sh
-for f in *fa; do prequal $f ; done
+for f in *fa; do ~/Escritorio/software/prequal/prequal $f ; done
 ```
 The filtered (masked) alignments are in .filtered whereas .prequal contains relevant information such as the number of residues filtered.
 
@@ -105,7 +107,7 @@ The next step is to infer multiple sequence alignments from orthogroups. Multipl
 We will align gene files separately using a for loop:
 
 ```
-for f in *fa; do mafft $f > $f.mafft; done
+for f in *fa; do ~/Escritorio/software/mafft $f > $f.mafft; done
 ```
 
 
@@ -136,7 +138,7 @@ mkdir concatenation/
 mv *clipkit.fas concatenation/
 
 cd concatenation/
-perl /software/FASconCAT-G_v1.04.pl -l -s
+perl ~Escritorio/software/FASconCAT-G_v1.04.pl -l -s
 ```
 
 Is your concatenated file what you expected? It should contain 23 taxa and 21 genes. You might check the concatenation (`FcC_supermatrix.fas`) and the file containing the coordinates for gene boundaries (`FcC_supermatrix_partition.txt`). Looking good? Then your concatenated dataset is ready to rock!!
@@ -151,13 +153,13 @@ One of the most common approaches in phylogenomics is gene concatenation: the si
 We will use [IQTREE](http://www.iqtree.org/), an efficient and accurate software for maximum likelihood analysis. Another great alternative is [RAxML](https://github.com/stamatak/standard-RAxML). The most simple analysis is to treat the concatenated dataset as a single homogeneous entity. We need to provide the number of threads to use (`-nt 1`) input alignment (`-s`), tell IQTREE to select the best-fit evolutionary model with BIC (`-m TEST -merit BIC -msub nuclear`) and ask for branch support measures such as non-parametric bootstrapping and approximate likelihood ratio test (`-bb 1000 -alrt 1000 -bnni`):
 
 ```
-iqtree -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt 1 -bnni -pre unpartitioned
+~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt 1 -bnni -pre unpartitioned
 ```
 
 A more sophisticated approach would be to perform a partitioned maximum likelihood analysis, where different genes (or other data partitions) are allowed to have different evolutionary models. This should provide a better fit to the data but will increase the number of parameters too. To launch this analysis we need to provide a file containing the coordinates of the partitions (`-p`) and we can ask IQTREE to select the best-fit models for each partition, in this case, according to AICc (more suitable for shorter alignments).
 
 ```
-iqtree -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt 1 -bnni -pre partitioned
+~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt 1 -bnni -pre partitioned
 ```
 
 Congratulations!! If everything went well, you should get your maximum likelihood estimation of the vertebrate phylogeny (`.treefile`)! Looking into the file you will see a tree in parenthetical (newick) format. See below how to create a graphical representation of your tree.
@@ -227,7 +229,7 @@ We will use [ASTRAL](https://github.com/smirarab/ASTRAL), a widely used tool tha
 Thus, before running ASTRAL, we will need to estimate individual gene trees. This can be easily done by calling IQTREE in a for loop:
 
 ```
-for f in *clipkit; do iqtree -s $f -m TEST -msub nuclear -merit AICc -nt 1; done
+for f in *clipkit; do ~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s $f -m TEST -msub nuclear -merit AICc -nt 1; done
 ```
 
 After all gene trees are inferred, we should put them all into a single file:
@@ -239,7 +241,7 @@ cat *clipkit.treefile > my_gene_trees.tre
 Now running ASTRAL is trivial, providing the input file with the gene trees and the desired output file name:
 
 ```
-java -jar /srv/evop/resources/astral/ASTRAL/Astral/Astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
+java -jar ~/Escritorio/software/Astral/Astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
 ```
 
 Congratulations!! You just got your coalescent species tree!! Is it different from the concatenated maximum likelihood trees? 
