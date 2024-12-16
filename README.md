@@ -246,7 +246,7 @@ cat *clipkit.fas.treefile > my_gene_trees.tre
 Now running ASTRAL is trivial, providing the input file with the gene trees and the desired output file name:
 
 ```
-java -jar ~/Escritorio/software/Astral/Astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
+java -jar ~/Escritorio/software/Astral/astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
 ```
 
 Congratulations!! You just got your coalescent species tree!! Is it different from the concatenated maximum likelihood trees? 
