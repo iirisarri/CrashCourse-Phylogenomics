@@ -112,7 +112,7 @@ The next step is to infer multiple sequence alignments from orthogroups. Multipl
 We will align gene files separately using a for loop:
 
 ```
-for f in *filtered; do ~/Escritorio/software/mafft $f > $f.mafft; done
+for f in *filtered; do ~/Escritorio/software/t_coffee $f -output=fasta; done
 ```
 
 
