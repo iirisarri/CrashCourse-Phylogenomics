@@ -20,7 +20,7 @@ Let's start by cloning this repository. The starting data can be found in the `v
 git clone https://github.com/iirisarri/CrashCourse-Phylogenomics.git
 
 # Copy software in GitHub to your local software folder so everything it's in the same location
-cp CrashCours-Phylogenomics/software ~/Escritorio/software
+cp CrashCours-Phylogenomics/software/* ~/Escritorio/software
 
 #Download MAFFT
 wget https://mafft.cbrc.jp/alignment/software/mafft-7.526-linux.tgz
@@ -138,12 +138,12 @@ While diving into phylogenomic pipelines, it is always advisable to check a few 
 To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. There are many tools that you can use for this step (e.g [concat_fasta.pl](https://github.com/santiagosnchez/concat_fasta) or [catsequences](https://github.com/ChrisCreevey/catsequences)). Here, we will use [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
 
 ```
-for f in ../*clipkit; do mv $f $f.fas; done
+for f in *clipkit; do mv $f $f.fas; done
 mkdir concatenation/
 mv *clipkit.fas concatenation/
 
 cd concatenation/
-perl ~Escritorio/software/FASconCAT-G_v1.04.pl -l -s
+perl ~/Escritorio/software/FASconCAT-G_v1.04.pl -l -s
 ```
 
 Is your concatenated file what you expected? It should contain 23 taxa and 21 genes. You might check the concatenation (`FcC_supermatrix.fas`) and the file containing the coordinates for gene boundaries (`FcC_supermatrix_partition.txt`). Looking good? Then your concatenated dataset is ready to rock!!
