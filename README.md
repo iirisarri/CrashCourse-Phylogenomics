@@ -26,8 +26,8 @@ wget https://doua.prabi.fr/software/seaview_data/seaview5.tgz
 tar zxvf seaview5.tgz
 ```
 
-**We will start from a set of 20 proteins from up to 23 species of vertebrates. You can find them in the folder `Orthogroup_Sequences`.
-**
+**We will start from a set of 20 proteins from up to 23 species of vertebrates. You can find them in the folder `Orthogroup_Sequences`.**
+
 
 ## Inferring ortholog groups (optional)
 
