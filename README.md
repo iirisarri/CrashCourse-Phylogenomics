@@ -59,14 +59,6 @@ You will see that sequences are named `Genus_species_GENE_XXXX`. To concatenate 
   <summary>Need help?</summary>
   
 ```
-for f in *fa; do awk -F"_" '/>/ {print $1"_"$(NF-2)}; !/>/ {print $0}' $f> out; mv out $f; done
-
-# Explanation: loop through the files, modify the input file and save it to "out", overwrite the input with it. 
-# Awk: using the "_" field separator, modify lines starting with ">" (sequence names) so that they will only 
-# contain the second and second last elements separated by an underscore (>Genus_species).
-# Print all other lines not starting with ">" (i.e. sequences) without modification.
-
-# An easier version:
 for f in *fa; do sed -E '/>/ s/_GENE.+//g' $f > out; mv out $f; done
 # Explanation: in headers (lines starting with ">"), remove everything after "_GENE"
 # Can you guess the difference with using awk? Look at Canis_lupus_familiaris
@@ -85,13 +77,6 @@ Often, transcriptomes and genomes have stretches of erroneous, non-homologous am
 
 We will use [PREQUAL](https://academic.oup.com/bioinformatics/article/34/22/3929/5026659?login=true), a software that takes sets of (homologous) unaligned sequences and identifies sequence stretches (amino acids or codons) sharing no evidence of (residue) homology, which are then masked in the output. Note that homology can be invoked at the level of sequences as well as of residues (amino acids or nucleotides). 
 
-Download and Iinstall PREQUAL:
-```
-git clone https://github.com/simonwhelan/prequal
-cd prequal
-make
-```
-
 Running PREQUAL for each set orthogroup is easy:
 ```sh
 for f in *fa; do ~/Escritorio/software/prequal/prequal $f ; done
@@ -107,21 +92,21 @@ The next step is to infer multiple sequence alignments from orthogroups. Multipl
 We will align gene files separately using a for loop:
 
 ```
-for f in *filtered; do ~/Escritorio/software/t_coffee $f -output=fasta; done
+for f in *filtered; do mafft $f > $f.mafft; done
 ```
 
 
 ## Alignment trimming
 
 
-Some gene regions (e.g., fast-evolving) are difficult to align and thus positional homology can be uncertain. It is unclear (i.e., problem-specific) whether trimming suspicious regions [improves](https://academic.oup.com/sysbio/article/56/4/564/1682121) or [worsens](https://academic.oup.com/sysbio/article/64/5/778/1685763) tree inference. However, gently trimming very incomplete positions (e.g. with >90% gaps) will speed up computation in the next steps without significant loss of phylogenetic information .
+Some gene regions (e.g., fast-evolving) are difficult to align and thus positional homology can be uncertain. It is unclear (i.e., problem-specific) whether trimming suspicious regions [improves](https://academic.oup.com/sysbio/article/56/4/564/1682121) or [worsens](https://academic.oup.com/sysbio/article/64/5/778/1685763) tree inference. However, gently trimming very incomplete positions (e.g. with >90% gaps) will speed up computation in the next steps without a significant loss of phylogenetic information.
 
 To trim alignment positions we can use [ClipKIT]([https://bmcevolbiol.biomedcentral.com/articles/10.1186/1471-2148-10-210](https://github.com/JLSteenwyk/ClipKIT)) but several other software are also available.
 
 To remove alignment positions with > 90% gaps:
 
 ```
-for f in *fasta_aln; do clipkit $f -m gappy; done
+for f in *mafft; do clipkit $f -m gappy; done
 ```
 
 While diving into phylogenomic pipelines, it is always advisable to check a few intermediate results to ensure we are doing what we should be doing. Multiple sequence alignments can be visualized in [SeaView](http://doua.prabi.fr/software/seaview) or [AliView](https://github.com/AliView/AliView). Also, one could have a quick look at alignments using command line tools (`less -S`).
@@ -153,71 +138,17 @@ One of the most common approaches in phylogenomics is gene concatenation: the si
 We will use [IQTREE](http://www.iqtree.org/), an efficient and accurate software for maximum likelihood analysis. Another great alternative is [RAxML](https://github.com/stamatak/standard-RAxML). The most simple analysis is to treat the concatenated dataset as a single homogeneous entity. We need to provide the number of threads to use (`-nt 1`) input alignment (`-s`), tell IQTREE to select the best-fit evolutionary model with BIC (`-m TEST -merit BIC -msub nuclear`) and ask for branch support measures such as non-parametric bootstrapping and approximate likelihood ratio test (`-bb 1000 -alrt 1000 -bnni`):
 
 ```
-~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt AUTO -bnni -pre unpartitioned
+iqtree3 -s FcC_supermatrix.fas -m TEST -msub nuclear -bb 1000 -alrt 1000 -nt AUTO -bnni -pre unpartitioned
 ```
 
 A more sophisticated approach would be to perform a partitioned maximum likelihood analysis, where different genes (or other data partitions) are allowed to have different evolutionary models. This should provide a better fit to the data but will increase the number of parameters too. To launch this analysis we need to provide a file containing the coordinates of the partitions (`-p`) and we can ask IQTREE to select the best-fit models for each partition, in this case, according to AICc (more suitable for shorter alignments).
 
 ```
-~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt AUTO -bnni -pre partitioned
+iqtree3 -s FcC_supermatrix.fas -p FcC_supermatrix_partition.txt -m TEST -msub nuclear -merit AICc -bb 1000 -alrt 1000 -nt AUTO -bnni -pre partitioned
 ```
 
 Congratulations!! If everything went well, you should get your maximum likelihood estimation of the vertebrate phylogeny (`.treefile`)! Looking into the file you will see a tree in parenthetical (newick) format. See below how to create a graphical representation of your tree.
 
-
-## EXTRA: Bayesian Inference 
-The next step would be to run a Bayesian analysis using [Phylobayes](https://github.com/bayesiancook/phylobayes/tree/master), however, due to time constraints, we will provide you with the Bayesian topology. 
-
-Here are the commands we used for Phylobayes.
-
-```sh
-#Chain 1
-pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain1
-
-#Chain2
-pb  -d  FcC_supermatrix.phy  -cat  Supermatrix.chain2
-```
-Unless you have a walltime limit on your server Phylobayes will run forever, for this practical I let it run for 3 days. 
-Once the analysis is stopped we need to check for the convergence and generate the consensus tree. 
-
-```sh
-#check how many trees you have generated in the two chains 
-grep -c ";" *treelist
-#Supermatrix.chain1.treelist:69861
-#Supermatrix.chain2.treelist:57407
-```
-In Phylobayes there are two functions to check convergence: `bpcomp` will check convergence for the tree space, while `tracecomp` will check convergence of the continuous parameters of the model. They have a similar syntax and for today we will see only `bpcomp`. In this function you have to provide the burnin (e.g. the % tree generated in the very first part of the run which will be removed), the sampling frequency, the number of trees you have generated in the smallest chain (e.g. in our case chain 2) and the name of the chains.
-
-As stated in the Phylobayes manual "the bpcomp program will output the largest (`maxdiff`) and mean (`meandiff`) discrepancy observed across all bipartitions. It will also produce a file (`bpcomp.con.tre`) with the consensus obtained by pooling all the trees of the chains given as arguments (this is your tree!)."
-
-Some guidelines:
-• maxdiff < 0.1: good run.
-• maxdiff < 0.3: acceptable: gives a good qualitative picture of the posterior consensus.
-• 0.3 < maxdiff < 1: the sample is not yet sufficiently large, and the chains have not converged, but this is on the right track.
-• if maxdiff = 1 even after 10,000 points, this indicates that at least one of the runs is stuck in a local maximum.
-
-
-```sh
-bpcomp -x 12000 10 57407 Supermatrix.chain1 Supermatrix.chain2
-
-#initialising random
-#seed was : 326052
-
-
-#Supermatrix.chain1.treelist : 4540 trees
-#Supermatrix.chain2.treelist : 4540 trees
-
-#maxdiff     : 0.00462555
-#meandiff    : 0.000228671
-
-#bipartition list in : bpcomp.bplist
-#consensus in        : bpcomp.con.tre
-
-```
-Given the guidelines above, how is our run?
-
-You can check the bayesian run in the folder `intermediate_files/phylobayes`
-Open the tree in FigTree and compare it with the topology you obtained with IQTree. 
 
 ## Coalescence analysis
 
@@ -229,7 +160,7 @@ We will use [ASTRAL](https://github.com/smirarab/ASTRAL), a widely used tool tha
 Thus, before running ASTRAL, we will need to estimate individual gene trees. This can be easily done by calling IQTREE in a for loop:
 
 ```
-for f in *clipkit.fas; do ~/Escritorio/software/iqtree-2.3.6-Linux-intel/bin/iqtree2 -s $f -m TEST -msub nuclear -merit AICc -nt AUTO; done
+for f in *clipkit.fas; do iqtree3  -s $f -m TEST -msub nuclear -merit AICc -nt AUTO; done
 ```
 
 After all gene trees are inferred, we should put them all into a single file:
@@ -271,4 +202,5 @@ Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in th
 * FIGTree V1.4.4 (https://github.com/rambaut/figtree/releases) 
 * TreeViewer (https://treeviewer.org/)
 * iTOL (https://itol.embl.de/)
+* SeaView (https://doua.prabi.fr/software/seaview_data/seaview5.tgz)
   
