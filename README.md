@@ -4,8 +4,7 @@ This hands-on course will introduce you to the awesomeness of phylogenomics.
 
 You will learn the most fundamental steps in the phylogenomics pipeline, allowing you to go from a bunch of sequences from different species to a phylogenetic tree that represents how these species are related to each other in evolutionary terms. 
 
-The phylogenomics pipeline can become very complex, many additional steps might be included (particularly at the stage of dataset assembly!) and some analyses can take weeks to complete. Pipelines are modular, meaning they can (and should) be improved, as well as modified to the particular question at hand. Here, we will cover the basics of a phylogenomic pipeline: identification of homologs, multiple sequence alignment, alignment trimming and phylogenetic inference with concatenation and coalescent methods.
-
+The phylogenomics pipeline can become very complex, many additional steps might be included (particularly at the stage of dataset assembly!) and some analyses can take weeks to complete. Pipelines are modular, meaning they can (and should) be improved, as well as modified to the particular question at hand. Here, we will cover the basics of a phylogenomic pipeline: identification of homologs, multiple sequence alignment, alignment trimming, and phylogenetic inference with concatenation and coalescent methods.
 
 
 ## Objective and data
@@ -27,14 +26,14 @@ wget https://doua.prabi.fr/software/seaview_data/seaview5.tgz
 tar zxvf seaview5.tgz
 ```
 
-In `vertebrate_proteomes` you will see 23 fasta files, each containing a set of proteins from a different species.
+We will start from a set of 20 proteins from up to 23 species of vertebrates. You can find them in the folder `Orthogroup_Sequences`.
 
 
+## Inferring ortholog groups (optional)
 
-## Inferring ortholog groups
+If you want to know how we obtained the 20 groups of homologous proteins, there is no mystery. We started from a set of proteins annotated in 23 species of vertebrates, which you can access in `intermediate_results/0_Vertebrate_proteomes`
 
-
-The first step is to identify homologs among all the proteins. We will use [OrthoFinder](https://github.com/davidemms/OrthoFinder) for this task. We will use default parameters, just providing the folder containing the proteome files.
+To identify homologs among all the proteins, we used [OrthoFinder](https://github.com/davidemms/OrthoFinder) with default parameters, just providing the folder containing the proteome files.
 
 ```
 orthofinder -f vertebrate_proteomes
@@ -71,7 +70,8 @@ Don't forget to check the output: is your command doing what you want?
 **NOTE ABOUT ORTHOLOGY**: Ensuring orthology is a difficult issue and often using a tool like Orthofinder might not be enough. Paralogy is a tricky business! Research has shown (e.g. [here](https://www.nature.com/articles/s41559-017-0126) [here](https://academic.oup.com/sysbio/article/71/1/105/6275704?login=false) or [here](https://academic.oup.com/mbe/article/36/6/1344/5418531)) that including paralogs can bias the phylogenetic relationship and molecular clock estimates, particularly when the phylogenetic signal is weak. Paralogs should always be removed before phylogenetic inference. But identifying them can be difficult and time-consuming. One could build single-gene trees and look for sequences producing extremely long branches or clustering outside of the remaining sequences. [Automatic pipelines](https://github.com/fethalen/phylopypruner) also exist.
 
 
-## EXTRA: Pre-alignment and quality filtering
+## Pre-alignment and quality filtering
+
 
 Often, transcriptomes and genomes have stretches of erroneous, non-homologous amino acids or nucleotides, produced by sequencing errors, assembly errors, or errors in genome annotation. But until recently, these type of errors had been mostly ignored because no automatic tool could deal with them.
 
@@ -81,7 +81,7 @@ Running PREQUAL for each set orthogroup is easy:
 ```sh
 for f in *fa; do ~/Escritorio/software/prequal/prequal $f ; done
 ```
-The filtered (masked) alignments are in .filtered whereas .prequal contains relevant information such as the number of residues filtered.
+The filtered (masked) alignments are in .filtered, whereas .prequal contains relevant information such as the number of residues filtered.
 
 
 ## Multiple sequence alignment
