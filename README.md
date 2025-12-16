@@ -60,7 +60,6 @@ You will see that sequences are named `Genus_species_GENE_XXXX`. To concatenate 
 ```
 for f in *fa; do sed -E '/>/ s/_GENE.+//g' $f > out; mv out $f; done
 # Explanation: in headers (lines starting with ">"), remove everything after "_GENE"
-# Can you guess the difference with using awk? Look at Canis_lupus_familiaris
 ```
 </details>
 
