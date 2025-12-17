@@ -19,7 +19,7 @@ Let's start by cloning this repository. The starting data can be found in the `v
 git clone https://github.com/iirisarri/CrashCourse-Phylogenomics.git
 
 # Copy software in GitHub to your local software folder so everything it's in the same location
-cp CrashCourse-Phylogenomics/software/* ~/Escritorio/software
+cp CrashCourse-Phylogenomics/software/* ~/Desktop/software
 
 # Download SeaView
 wget https://doua.prabi.fr/software/seaview_data/seaview5.tgz
@@ -78,7 +78,7 @@ We will use [PREQUAL](https://academic.oup.com/bioinformatics/article/34/22/3929
 
 Running PREQUAL for each set orthogroup is easy:
 ```sh
-for f in *fa; do ~/Escritorio/software/prequal/prequal $f ; done
+for f in *fa; do prequal $f ; done
 ```
 The filtered (masked) alignments are in .filtered, whereas .prequal contains relevant information such as the number of residues filtered.
 
@@ -104,7 +104,7 @@ To trim alignment positions we can use [BMGE](https://gensoft.pasteur.fr/docs/BM
 
 
 ```
-for f in *mafft; do java -jar BMGE.jar -i $f -t AA -of $f.bmge ; done
+for f in *mafft; do java -jar ../software/BMGE.jar -i $f -t AA -of $f.bmge ; done
 
 ```
 
@@ -122,7 +122,7 @@ mkdir concatenation/
 mv *bmge.fas concatenation/
 
 cd concatenation/
-perl ~/Escritorio/software/FASconCAT-G_v1.04.pl -l -s
+perl ~/Desktop/software/FASconCAT-G_v1.04.pl -l -s
 ```
 
 Is your concatenated file what you expected? It should contain 23 taxa and 21 genes. You might check the concatenation (`FcC_supermatrix.fas`) and the file containing the coordinates for gene boundaries (`FcC_supermatrix_partition.txt`). Looking good? Then your concatenated dataset is ready to rock!!
@@ -171,7 +171,7 @@ cat *bmge.fas.treefile > my_gene_trees.tre
 Now running ASTRAL is trivial, providing the input file with the gene trees and the desired output file name:
 
 ```
-java -jar ~/Escritorio/software/Astral/astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
+java -jar ~/Desktop/software/Astral/astral.5.7.8.jar -i my_gene_trees.tre -o species_tree_ASTRAL.tre 2> out.log
 ```
 
 Congratulations!! You just got your coalescent species tree!! Is it different from the concatenated maximum likelihood trees? 
@@ -201,5 +201,5 @@ Upload your trees to iTOL. Trees need to be rooted with an outgroup. Click in th
 * FIGTree V1.4.4 (https://github.com/rambaut/figtree/releases) 
 * TreeViewer (https://treeviewer.org/)
 * iTOL (https://itol.embl.de/)
-* SeaView (https://doua.prabi.fr/software/seaview_data/seaview5.tgz)
+* SeaView (https://doua.prabi.fr/software/seaview_data/seaview5-64.tgz)
   
