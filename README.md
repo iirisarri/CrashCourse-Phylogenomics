@@ -100,12 +100,12 @@ for f in *filtered; do mafft $f > $f.mafft; done
 
 Some gene regions (e.g., fast-evolving) are difficult to align and thus positional homology can be uncertain. It is unclear (i.e., problem-specific) whether trimming suspicious regions [improves](https://academic.oup.com/sysbio/article/56/4/564/1682121) or [worsens](https://academic.oup.com/sysbio/article/64/5/778/1685763) tree inference. However, gently trimming very incomplete positions (e.g. with >90% gaps) will speed up computation in the next steps without a significant loss of phylogenetic information.
 
-To trim alignment positions we can use [ClipKIT]([https://bmcevolbiol.biomedcentral.com/articles/10.1186/1471-2148-10-210](https://github.com/JLSteenwyk/ClipKIT)) but several other software are also available.
+To trim alignment positions we can use [BMGE](https://gensoft.pasteur.fr/docs/BMGE/1.12/BMGE_doc.pdf) but several other software are also available.
 
-To remove alignment positions with > 90% gaps:
 
 ```
-for f in *mafft; do clipkit $f -m gappy; done
+for f in *mafft; do java -jar BMGE.jar -i $f -t AA -of $f.bmge ; done
+
 ```
 
 While diving into phylogenomic pipelines, it is always advisable to check a few intermediate results to ensure we are doing what we should be doing. Multiple sequence alignments can be visualized in [SeaView](http://doua.prabi.fr/software/seaview) or [AliView](https://github.com/AliView/AliView). Also, one could have a quick look at alignments using command line tools (`less -S`).
@@ -117,9 +117,9 @@ While diving into phylogenomic pipelines, it is always advisable to check a few 
 To infer our phylogenomic tree we need to concatenate the trimmed single-gene alignments we generated. There are many tools that you can use for this step (e.g [concat_fasta.pl](https://github.com/santiagosnchez/concat_fasta) or [catsequences](https://github.com/ChrisCreevey/catsequences)). Here, we will use [FASconCAT](https://github.com/PatrickKueck/FASconCAT-G), which will read in all `\*.fas` `\*.phy` or `\*.nex` files in the working directory and concatenate them (in random order).
 
 ```
-for f in *clipkit; do mv $f $f.fas; done
+for f in *bmge; do mv $f $f.fas; done
 mkdir concatenation/
-mv *clipkit.fas concatenation/
+mv *bmge.fas concatenation/
 
 cd concatenation/
 perl ~/Escritorio/software/FASconCAT-G_v1.04.pl -l -s
@@ -159,13 +159,13 @@ We will use [ASTRAL](https://github.com/smirarab/ASTRAL), a widely used tool tha
 Thus, before running ASTRAL, we will need to estimate individual gene trees. This can be easily done by calling IQTREE in a for loop:
 
 ```
-for f in *clipkit.fas; do iqtree2  -s $f -m TEST -msub nuclear -merit AICc -nt AUTO; done
+for f in *bmge.fas; do iqtree2  -s $f -m TEST -msub nuclear -merit AICc -nt AUTO; done
 ```
 
 After all gene trees are inferred, we should put them all into a single file:
 
 ```
-cat *clipkit.fas.treefile > my_gene_trees.tre
+cat *bmge.fas.treefile > my_gene_trees.tre
 ```
 
 Now running ASTRAL is trivial, providing the input file with the gene trees and the desired output file name:
